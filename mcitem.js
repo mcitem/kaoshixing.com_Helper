@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         宏图在线、考试星视频自动播放
 // @namespace    https://github.com/mcitem
-// @version      2024-05-11
+// @version      1.0
 // @description  宏图在线、考试星视频自动播放，由于不知道有没有倍速检测，干脆搞个简单脚本自动播放 只有简单自动播放功能
 // @author       MCitem
 // @match        https://v.kaoshixing.com/exam/pc/course/
