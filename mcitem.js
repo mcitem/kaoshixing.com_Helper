@@ -126,7 +126,7 @@
 
             if( unfinished.length<i+1&&
                 fin[0].innerText=="00:00:00"&&
-                document.getElementsByClassName("el-progress__text")[unfinished[i]-1].innerText!='100%'
+                document.getElementsByClassName("el-progress__text")[unfinished[i-1]-1].innerText=='100%'
             ){
                 console.log('全部播放完成');
                 toggleButton.textContent = "执行结束";
