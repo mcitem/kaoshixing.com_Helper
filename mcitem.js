@@ -53,6 +53,7 @@
     });
 
     function sleep(ms=1000) {
+        console.log('等待',ms/1000,'秒');
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -108,18 +109,33 @@
         while(toggleRUN){ //main loop
             await sleep();
             const fin = document.getElementsByClassName("countdown");
+            mylog.textContent = fin[0].innerText; + '\n' + '未完成章节：' + String(unfinished);
+
+
             if(fin&&unfinished.length>=i+1){ // i 0,1,2...  //length 1,2,3...
-                mylog.textContent = fin[0].innerText;
 
                 if (fin[0].innerText=="00:00:00"&&
-                    document.getElementsByClassName("el-progress__text")[unfinished[i]].innerText!='100%'
+                    document.getElementsByClassName("el-progress__text")[unfinished[i]-1].innerText!='100%'
                 ){
-                    await sleep(2000);
-                    await PlayVideo(itotal+1); //播放视频
-                    console.log('play',itotal+1);
+                    await sleep(6000);
+                    await PlayVideo(unfinished[i]); //播放视频
+                    console.log('play',unfinished[i]);
                     i = i + 1;
                 }
             }
+
+            if( unfinished.length<i+1&&
+                fin[0].innerText=="00:00:00"&&
+                document.getElementsByClassName("el-progress__text")[unfinished[i]-1].innerText!='100%'
+            ){
+                console.log('全部播放完成');
+                toggleButton.textContent = "执行结束";
+                enable = false;
+                toggleRUN = false;
+                toggleButton.textContent = "执行结束";
+                return;
+            }
+
         }
 
     }
@@ -137,7 +153,6 @@
                 el[playNo - 1].click();
             }
             let loop = true;
-
             while(loop){
                 await sleep(1000);
                 activeNo = GetActiveNo();
