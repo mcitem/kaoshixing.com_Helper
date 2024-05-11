@@ -30,6 +30,7 @@
     floatingWindow.appendChild(toggleButton);
     floatingWindow.appendChild(mylog);
 
+    document.body.appendChild(floatingWindow);
 
     var toggleRUN = false; // 主执行器开关
 
@@ -47,7 +48,14 @@
             toggleRUN = false;
         }
 
+
+
     });
+
+    function sleep(ms=1000) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     var unfinished = []; // 未完成章节列表
     function main() {
 
@@ -78,43 +86,41 @@
                         unfinished.push(i+1);
                     }
                 }
-                console.log('unf',unfinished,unfinished.length); // denug
+                console.log('unflist',unfinished,unfinished.length); // denug
 
                 if(unfinished.length>0){
-                    run(itotal,jtotal,unfinished);
+                    mainrun(itotal,jtotal,unfinished);
                 }
 
             }else if(el.length != jtotal){
                 mylog.textContent = "加载异常";
+                toggleButton.textContent = "异常";
+                enable = false;
                 return;
             }
             
         }
     }
 
-
-
-    function run(itotal,jtotal,unfinished) {
-        console.log("inrun");
-        let i = 0;
-
-        async function globalloop(itotal,jtotal) {
-
-            const fin = document.getElementsByClassName("countdown");  //任务完成倒计时
+    async function mainrun(itotal,jtotal,unfinished) {
+        console.log('in_mainrun');
+        while(i&&toggleRUN){ //main loop
+            await sleep();
+            const fin = document.getElementsByClassName("countdown");
             if(fin&&unfinished.length>=i+1){ // i 0,1,2...  //length 1,2,3...
                 mylog.textContent = fin[0].innerText;
 
                 if (fin[0].innerText=="00:00:00"&&
                     document.getElementsByClassName("el-progress__text")[unfinished[i]].innerText!='100%'
                 ){
+                    await sleep(2000);
                     await PlayVideo(itotal+1); //播放视频
+                    console.log('play',itotal+1);
                     i = i + 1;
                 }
             }
-
-            if(toggleRUN){setTimeout(()=>globalloop(itotal,jtotal), 1000);}
         }
-        globalloop(itotal,jtotal);
+
     }
     
 
@@ -123,7 +129,7 @@
 
             let activeNo = GetActiveNo();
             const el = document.getElementsByClassName('catalog-item');
-
+            
             if (playNo == activeNo) {
                 console.log("已在未完成章节");
             } else if (playNo != activeNo) {
@@ -131,13 +137,13 @@
                 el[playNo - 1].click();
             }
 
-            var VideoPlayed = false;
             async function loop(){
 
                 if(activeNo == playNo){
                     // console.log("重载完成 启用播放");
                     const playVideoButton = document.getElementsByClassName("vjs-big-play-button");
                     playVideoButton[0].click();
+
                     console.log('resolve',document.getElementById("myVideo").classList.contains("vjs-playing"),document.getElementById("myVideo").classList.contains("vjs-has-started"),document.getElementsByClassName("countdown")[0].innerText);
                     if (document.getElementById("myVideo").classList.contains("vjs-playing")&&
                         document.getElementById("myVideo").classList.contains("vjs-has-started")&&
@@ -165,5 +171,5 @@
         }
     }
 
-    document.body.appendChild(floatingWindow);
+
 })();
