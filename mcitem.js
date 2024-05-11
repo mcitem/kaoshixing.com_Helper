@@ -2,7 +2,7 @@
 // @name         宏图在线、考试星视频自动播放
 // @namespace    https://github.com/mcitem
 // @version      2024-05-11
-// @description  宏图在线、考试星视频自动播放，由于不知道有没有倍速检测，干脆搞个简单脚本自动播放
+// @description  宏图在线、考试星视频自动播放，由于不知道有没有倍速检测，干脆搞个简单脚本自动播放 只有简单自动播放功能
 // @author       MCitem
 // @match        https://v.kaoshixing.com/exam/pc/course/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=kaoshixing.com
@@ -103,8 +103,9 @@
     }
 
     async function mainrun(itotal,jtotal,unfinished) {
+        let i = 0;
         console.log('in_mainrun');
-        while(i&&toggleRUN){ //main loop
+        while(toggleRUN){ //main loop
             await sleep();
             const fin = document.getElementsByClassName("countdown");
             if(fin&&unfinished.length>=i+1){ // i 0,1,2...  //length 1,2,3...
@@ -125,41 +126,37 @@
     
 
     function PlayVideo(playNo) {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
 
             let activeNo = GetActiveNo();
             const el = document.getElementsByClassName('catalog-item');
-            
             if (playNo == activeNo) {
                 console.log("已在未完成章节");
             } else if (playNo != activeNo) {
                 console.log("切换章节");
                 el[playNo - 1].click();
             }
+            let loop = true;
 
-            async function loop(){
-
-                if(activeNo == playNo){
-                    // console.log("重载完成 启用播放");
+            while(loop){
+                await sleep(1000);
+                activeNo = GetActiveNo();
+                if (activeNo == playNo) {
                     const playVideoButton = document.getElementsByClassName("vjs-big-play-button");
                     playVideoButton[0].click();
-
-                    console.log('resolve',document.getElementById("myVideo").classList.contains("vjs-playing"),document.getElementById("myVideo").classList.contains("vjs-has-started"),document.getElementsByClassName("countdown")[0].innerText);
                     if (document.getElementById("myVideo").classList.contains("vjs-playing")&&
-                        document.getElementById("myVideo").classList.contains("vjs-has-started")&&
-                        document.getElementsByClassName("countdown")[0].innerText=="00:00:00"
+                    document.getElementById("myVideo").classList.contains("vjs-has-started")&&
+                    document.getElementsByClassName("countdown")[0].innerText!="00:00:00"
                     ){
-                        // console.log("resolve ending ");
+                        await sleep(1000);
                         resolve();
-                        VideoPlayed = true;
+                        loop = false;
                     }
                 }
-                if(!VideoPlayed){setTimeout(loop, 1000);}
-            }
-            loop();
-        });
-    };
+            };
 
+        });
+    }
     // 获取当前所在的章节数
     function GetActiveNo(){
         const el = document.getElementsByClassName('catalog-item');
