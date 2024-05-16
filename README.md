@@ -1,5 +1,5 @@
 宏图在线 考试星自动刷课脚本 军事理论 （简单版
-做题可低价有偿帮（
+
 
 [ScriptCat](https://scriptcat.org/zh-CN/script-show-page/1818)
 
